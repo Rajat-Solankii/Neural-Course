@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NeuralCourse — AI-Powered E-Learning</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --bg:       #07080d;
+  --bg2:      #0e1018;
+  --bg3:      #151820;
+  --bg4:      #1c2030;
+  --bg5:      #232738;
+  --border:   rgba(255,255,255,0.06);
+  --border2:  rgba(255,255,255,0.1);
+  --text:     #e2e8ff;
+  --text2:    #8892b8;
+  --text3:    #4a5280;
+  --accent:   #6c63ff;
+  --accent2:  #8b85ff;
+  --accent3:  #b8b4ff;
+  --pink:     #ff6b9d;
+  --cyan:     #00d4ff;
+  --green:    #00e5a0;
+  --amber:    #ffb547;
+  --red:      #ff5c5c;
+  --grad1: linear-gradient(135deg,#6c63ff,#ff6b9d);
+  --grad2: linear-gradient(135deg,#00d4ff,#6c63ff);
+  --grad3: linear-gradient(135deg,#00e5a0,#00d4ff);
+  --glow:  0 0 40px rgba(108,99,255,0.25);
+  --glow2: 0 0 60px rgba(255,107,157,0.15);
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow2:0 20px 60px rgba(0,0,0,0.7);
+  --r: 16px;
+  --r2: 12px;
+  --r3: 8px;
+  --sidebar: 300px;
+  --topbar:  64px;
+  --font: 'Plus Jakarta Sans',system-ui,sans-serif;
+  --font2:'Space Grotesk',system-ui,sans-serif;
+  --mono: 'Fira Code',monospace;
+  --ease: cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="light"] {
+  --bg:    #f0f2ff;
+  --bg2:   #ffffff;
+  --bg3:   #eaecf8;
+  --bg4:   #dfe2f5;
+  --bg5:   #d4d8f0;
+  --border:rgba(0,0,0,0.06);
+  --border2:rgba(0,0,0,0.1);
+  --text:  #0f1235;
+  --text2: #424870;
+  --text3: #8890b8;
+  --shadow:0 8px 32px rgba(0,0,0,0.1);
+  --shadow2:0 20px 60px rgba(0,0,0,0.2);
+  --glow:  0 0 40px rgba(108,99,255,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{cursor:pointer;border:none;background:none;font-family:var(--font)}
+input{font-family:var(--font)}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.4;
+}
+
+/* ── LAYOUT ── */
+#app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar);flex-shrink:0;
+  display:flex;align-items:center;gap:10px;
+  padding:0 20px;
+  background:rgba(14,16,24,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:20;
+}
+.topbar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:var(--grad1);opacity:0.4;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font2);font-weight:700;font-size:19px;
+  white-space:nowrap;margin-right:4px;letter-spacing:-0.3px;
+}
+.logo-icon{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--grad1);
+  display:grid;place-items:center;font-size:16px;
+  box-shadow:0 0 20px rgba(108,99,255,0.5),0 0 40px rgba(255,107,157,0.2);
+  animation:logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 20px rgba(108,99,255,0.5),0 0 40px rgba(255,107,157,0.2)}50%{box-shadow:0 0 30px rgba(108,99,255,0.8),0 0 60px rgba(255,107,157,0.3)}}
+.logo-text{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+.field-tabs{display:flex;gap:3px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:3px;flex-shrink:0}
+.field-tab{
+  padding:6px 14px;border-radius:7px;
+  font-size:12.5px;font-weight:600;color:var(--text2);
+  transition:all 0.2s var(--ease);white-space:nowrap;
+  display:flex;align-items:center;gap:5px;
+}
+.field-tab:hover{color:var(--text);background:var(--bg4)}
+.field-tab.active{background:var(--grad1);color:#fff;box-shadow:0 2px 12px rgba(108,99,255,0.4)}
+
+/* Search */
+.search-wrap{flex:1;max-width:420px;position:relative;margin:0 8px}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none;transition:color 0.2s}
+.search-input{
+  width:100%;height:38px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:0 40px 0 38px;
+  color:var(--text);font-size:13px;outline:none;
+  transition:all 0.2s var(--ease);
+}
+.search-input::placeholder{color:var(--text3)}
+.search-input:focus{
+  border-color:var(--accent);background:var(--bg4);
+  box-shadow:0 0 0 3px rgba(108,99,255,0.15),var(--glow);
+}
+.search-input:focus ~ .search-icon, .search-wrap:focus-within .search-icon{color:var(--accent)}
+.search-clear{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;border-radius:50%;
+  background:var(--bg5);color:var(--text3);
+  display:none;place-items:center;font-size:11px;
+  cursor:pointer;transition:all 0.2s;
+}
+.search-clear:hover{background:var(--accent);color:#fff}
+.search-input:not(:placeholder-shown) + .search-clear{display:grid}
+
+/* Top right controls */
+.top-controls{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.filter-pill{
+  display:flex;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+}
+.filter-btn{
+  padding:6px 12px;font-size:12px;font-weight:600;color:var(--text2);
+  transition:all 0.2s;
+}
+.filter-btn:hover{color:var(--text)}
+.filter-btn.active{background:var(--accent);color:#fff}
+.ctrl-btn{
+  height:34px;padding:0 12px;border-radius:8px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:12px;font-weight:500;
+  display:flex;align-items:center;gap:5px;
+  transition:all 0.2s var(--ease);white-space:nowrap;
+}
+.ctrl-btn:hover{background:var(--bg4);color:var(--text);border-color:var(--border2)}
+.ctrl-btn.active{border-color:var(--green);color:var(--green)}
+.theme-toggle{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:15px;
+  display:grid;place-items:center;
+  transition:all 0.2s;
+}
+.theme-toggle:hover{background:var(--bg4);color:var(--text);border-color:var(--border2)}
+
+/* ── BODY ── */
+.body{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sidebar-head{
+  padding:14px 14px 10px;flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--text3);margin-bottom:4px;
+}
+.sidebar-count{font-size:12px;color:var(--text3)}
+.sidebar-list{flex:1;overflow-y:auto;padding:8px}
+
+/* Course Card (sidebar) */
+.course-card{
+  display:flex;gap:10px;padding:10px;border-radius:12px;
+  cursor:pointer;border:1px solid transparent;
+  transition:all 0.18s var(--ease);margin-bottom:4px;
+  position:relative;overflow:hidden;
+}
+.course-card::before{
+  content:'';position:absolute;inset:0;border-radius:12px;
+  background:var(--grad1);opacity:0;transition:opacity 0.2s;
+}
+.course-card:hover{background:var(--bg3);border-color:var(--border)}
+.course-card:hover::before{opacity:0.04}
+.course-card.active{
+  background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(255,107,157,0.06));
+  border-color:rgba(108,99,255,0.4);
+  box-shadow:var(--glow);
+}
+.course-card.active::before{opacity:0.06}
+.card-thumb{
+  width:58px;height:42px;border-radius:8px;
+  object-fit:cover;flex-shrink:0;
+  background:var(--bg4);border:1px solid var(--border);
+}
+.card-info{flex:1;min-width:0}
+.card-title{
+  font-size:12px;font-weight:600;color:var(--text);
+  line-height:1.4;margin-bottom:6px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 7px;border-radius:5px;
+  font-size:10px;font-weight:700;letter-spacing:0.02em;
+}
+.b-yt{background:rgba(255,80,80,0.15);color:#ff5c5c}
+.b-udemy{background:rgba(168,130,255,0.15);color:#a882ff}
+.b-coursera{background:rgba(0,212,255,0.15);color:#00d4ff}
+.b-free{background:rgba(0,229,160,0.15);color:#00e5a0}
+.b-paid{background:rgba(255,181,71,0.15);color:#ffb547}
+.b-level{background:rgba(108,99,255,0.12);color:var(--accent3)}
+.b-dur{background:rgba(255,255,255,0.06);color:var(--text2)}
+.b-rank{background:var(--grad1);color:#fff;box-shadow:0 2px 8px rgba(108,99,255,0.4)}
+
+/* Bookmark dot */
+.course-card.bm::after{
+  content:'';position:absolute;top:8px;right:8px;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--amber);box-shadow:0 0 6px var(--amber);
+}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;background:var(--bg);padding:24px;position:relative}
+
+/* Welcome */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;gap:20px}
+.welcome-glow{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(108,99,255,0.12) 0%,transparent 70%);pointer-events:none}
+.welcome-emoji{font-size:64px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.welcome-title{font-family:var(--font2);font-size:36px;font-weight:700;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px}
+.welcome-sub{font-size:15px;color:var(--text2);max-width:400px;line-height:1.7}
+.field-grid{display:flex;gap:14px;margin-top:8px}
+.field-btn{
+  padding:20px 28px;border-radius:16px;
+  background:var(--bg2);border:1px solid var(--border);
+  cursor:pointer;transition:all 0.25s var(--ease);
+  text-align:center;min-width:130px;
+  position:relative;overflow:hidden;
+}
+.field-btn::before{content:'';position:absolute;inset:0;background:var(--grad1);opacity:0;transition:opacity 0.25s}
+.field-btn:hover{border-color:rgba(108,99,255,0.5);transform:translateY(-4px);box-shadow:var(--glow),var(--shadow)}
+.field-btn:hover::before{opacity:0.06}
+.field-btn .icon{font-size:32px;margin-bottom:8px;display:block}
+.field-btn .name{font-size:13px;font-weight:600;font-family:var(--font2);position:relative}
+
+/* AI Recs */
+.section-wrap{margin-bottom:28px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-family:var(--font2);font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.ai-chip{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:var(--grad1);color:#fff;letter-spacing:0.04em}
+.recs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px}
+
+/* Rec Card */
+.rec-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  transition:all 0.22s var(--ease);position:relative;
+}
+.rec-card:hover{border-color:rgba(108,99,255,0.5);transform:translateY(-4px);box-shadow:var(--shadow),var(--glow)}
+.rec-rank{
+  position:absolute;top:8px;left:8px;z-index:2;
+  width:26px;height:26px;border-radius:8px;
+  background:var(--grad1);color:#fff;
+  font-size:11px;font-weight:800;display:grid;place-items:center;
+  font-family:var(--font2);box-shadow:0 2px 10px rgba(108,99,255,0.5);
+}
+.rec-img{width:100%;height:105px;object-fit:cover;background:var(--bg4)}
+.rec-body{padding:10px}
+.rec-platform{margin-bottom:6px}
+.rec-name{font-size:12px;font-weight:600;line-height:1.4;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rec-reason{font-size:11px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-style:italic}
+.score-row{display:flex;align-items:center;gap:6px;margin-top:8px}
+.score-bar{flex:1;height:3px;background:var(--bg4);border-radius:99px;overflow:hidden}
+.score-fill{height:100%;background:var(--grad1);border-radius:99px;transition:width 0.8s var(--ease)}
+.score-num{font-size:10px;color:var(--accent3);font-family:var(--mono)}
+
+/* ── COURSE DETAIL ── */
+.detail{display:flex;flex-direction:column;gap:20px}
+
+/* Search breadcrumb */
+.search-crumb{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 14px;border-radius:10px;
+  background:var(--bg2);border:1px solid var(--border);
+  margin-bottom:4px;font-size:12px;color:var(--text3);
+}
+.crumb-q{color:var(--accent3);font-weight:600}
+.crumb-live{color:var(--green);display:flex;align-items:center;gap:4px}
+.crumb-live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* Video container */
+.video-outer{
+  width:100%;border-radius:var(--r);overflow:hidden;
+  background:#000;position:relative;
+  box-shadow:var(--shadow2);
+  border:1px solid var(--border);
+}
+.video-outer iframe{width:100%;aspect-ratio:16/9;border:none;display:block}
+
+/* Embed error fallback */
+.video-fallback{
+  width:100%;aspect-ratio:16/9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;background:var(--bg2);cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.video-fallback img.fallback-thumb{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.3;
+}
+.fallback-content{position:relative;z-index:1;text-align:center}
+.play-circle{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 12px;
+  background:var(--grad1);display:grid;place-items:center;
+  font-size:26px;box-shadow:0 0 40px rgba(108,99,255,0.6);
+  transition:transform 0.2s;
+}
+.video-fallback:hover .play-circle{transform:scale(1.1)}
+.fallback-label{font-size:13px;font-weight:600;color:var(--text)}
+.fallback-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.fallback-btn{
+  margin-top:12px;padding:10px 24px;border-radius:10px;
+  background:var(--grad1);color:#fff;font-size:13px;font-weight:700;
+  font-family:var(--font);box-shadow:0 4px 20px rgba(108,99,255,0.4);
+  transition:all 0.2s;border:none;cursor:pointer;
+}
+.fallback-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(108,99,255,0.6)}
+
+/* Course info card */
+.info-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:22px;
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.info-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--grad1);
+}
+.info-header{display:flex;align-items:flex-start;gap:14px;justify-content:space-between;margin-bottom:14px}
+.info-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.info-title{font-family:var(--font2);font-size:20px;font-weight:700;line-height:1.3;margin-bottom:6px;letter-spacing:-0.3px}
+.info-instructor{font-size:13px;color:var(--text2);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.info-price{font-family:var(--font2);font-size:26px;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.info-price.free{background:var(--grad3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.info-reviews{font-size:11px;color:var(--text3);margin-top:2px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px}
+.stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.stat-val{font-size:14px;font-weight:700;font-family:var(--font2)}
+.stat-val.rating{color:var(--amber)}
+.info-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.tag{
+  padding:4px 10px;border-radius:6px;
+  background:var(--bg3);border:1px solid var(--border);
+  font-size:11px;color:var(--text2);font-family:var(--mono);
+  transition:all 0.15s;
+}
+.tag:hover{border-color:var(--accent);color:var(--accent3)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-main{
+  flex:1;min-width:160px;padding:13px 22px;border-radius:12px;
+  background:var(--grad1);color:#fff;font-size:14px;font-weight:700;
+  font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 20px rgba(108,99,255,0.4);
+  transition:all 0.2s var(--ease);cursor:pointer;border:none;
+}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,99,255,0.6)}
+.btn-sec{
+  padding:13px 16px;border-radius:12px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:14px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all 0.2s;cursor:pointer;
+}
+.btn-sec:hover{background:var(--bg4);color:var(--text);border-color:var(--border2)}
+.btn-sec.saved{border-color:var(--amber);color:var(--amber);background:rgba(255,181,71,0.08)}
+
+/* Resources */
+.resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.res-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:14px;
+  display:flex;gap:12px;cursor:pointer;
+  transition:all 0.2s var(--ease);
+}
+.res-card:hover{border-color:rgba(108,99,255,0.4);transform:translateY(-2px);box-shadow:var(--shadow)}
+.res-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:grid;place-items:center;font-size:18px;flex-shrink:0;
+}
+.res-icon.github{background:rgba(255,255,255,0.06)}
+.res-icon.docs{background:rgba(0,212,255,0.1)}
+.res-icon.pdf{background:rgba(255,92,92,0.1)}
+.res-info{flex:1;min-width:0}
+.res-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.res-desc{font-size:11px;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+.res-meta{display:flex;gap:6px;margin-top:6px;align-items:center}
+.res-stars{font-size:10px;color:var(--amber);display:flex;align-items:center;gap:2px}
+.res-lang{font-size:10px;color:var(--text3);background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--mono)}
+
+/* Recently viewed */
+.recent-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px}
+.recent-item{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;
+  padding:7px 12px;border-radius:10px;
+  background:var(--bg2);border:1px solid var(--border);
+  cursor:pointer;max-width:190px;
+  transition:all 0.2s;
+}
+.recent-item:hover{border-color:var(--accent);background:var(--bg3)}
+.recent-thumb{width:30px;height:22px;border-radius:4px;object-fit:cover;background:var(--bg4);flex-shrink:0}
+.recent-title{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Skeleton */
+.skel{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;border-radius:10px;animation:skelAnim 1.5s infinite}
+@keyframes skelAnim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-sidebar{height:64px;border-radius:12px;margin-bottom:4px}
+.skel-video{aspect-ratio:16/9;border-radius:var(--r)}
+.skel-info{height:220px;border-radius:var(--r)}
+.skel-rec{height:185px;border-radius:14px}
+
+/* Empty / Error */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:14px;text-align:center}
+.empty-icon{font-size:52px}
+.empty-title{font-family:var(--font2);font-size:20px;font-weight:700}
+.empty-sub{font-size:13px;color:var(--text2);max-width:340px}
+
+/* Toast */
+.toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:100}
+.toast{
+  padding:11px 16px;border-radius:12px;
+  background:var(--bg2);border:1px solid var(--border);
+  box-shadow:var(--shadow2);
+  font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:8px;
+  animation:toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0}to{transform:none;opacity:1}}
+.toast-out{animation:toastOut 0.3s ease forwards}
+@keyframes toastOut{to{transform:translateX(120%);opacity:0}}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:4px 0}
+
+/* YT loading indicator */
+.yt-searching{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 12px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(255,107,157,0.05));
+  border:1px solid rgba(108,99,255,0.2);
+  margin-bottom:6px;font-size:12px;color:var(--accent3);
+}
+.spinner{width:14px;height:14px;border:2px solid rgba(108,99,255,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){:root{--sidebar:260px}}
+@media(max-width:640px){.sidebar{display:none}.main{padding:14px}.field-grid{flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toasts" id="toasts"></div>
+<script>
+// ════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════
+const API_BASE = 'http://localhost:5248/api';
+
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+const S = {
+  field: null, courses: [], allPool: [],
+  recommended: [], resources: [],
+  selected: null, loading: false, error: null,
+  filter: 'all', maxPrice: 5000, search: '',
+  bookmarks: JSON.parse(localStorage.getItem('nc_bm') || '[]'),
+  recent: JSON.parse(localStorage.getItem('nc_rc') || '[]'),
+  theme: localStorage.getItem('nc_th') || 'dark',
+  ytKey: localStorage.getItem('nc_yt') || '',
+  ytSearching: false,
+  embedFailed: {},   // tracks which videoIds failed to embed
+};
+document.documentElement.setAttribute('data-theme', S.theme);
+
+// ════════════════════════════════════════════════════════════
+// MOCK DATA
+// ════════════════════════════════════════════════════════════
+function mockData(field) {
+  const yt = {
+    webdev:[
+      {id:'yt-nu_pCVPKzTk',title:'Full Stack Web Development Course 2024',platform:'YouTube',field,instructor:'Traversy Media',price:0,rating:4.8,reviewCount:85420,thumbnailUrl:'https://i.ytimg.com/vi/nu_pCVPKzTk/hqdefault.jpg',courseUrl:'https://youtu.be/nu_pCVPKzTk',youtubeVideoId:'nu_pCVPKzTk',isFree:true,duration:'11h 32m',level:'Beginner',tags:['HTML','CSS','JavaScript','React'],description:'Complete web dev crash course covering HTML, CSS, JS and React fundamentals.',source:'youtube'},
+      {id:'yt-RVFAyFWO4go',title:'React JS Full Course for Beginners',platform:'YouTube',field,instructor:'Dave Gray',price:0,rating:4.7,reviewCount:62100,thumbnailUrl:'https://i.ytimg.com/vi/RVFAyFWO4go/hqdefault.jpg',courseUrl:'https://youtu.be/RVFAyFWO4go',youtubeVideoId:'RVFAyFWO4go',isFree:true,duration:'9h 15m',level:'Beginner',tags:['React','Hooks','JSX','State'],description:'Learn React JS from scratch including hooks, context, and routing.',source:'youtube'},
+      {id:'yt-jS4aFq5-91M',title:'JavaScript Full Course – Beginner to Professional',platform:'YouTube',field,instructor:'freeCodeCamp.org',price:0,rating:4.9,reviewCount:125300,thumbnailUrl:'https://i.ytimg.com/vi/jS4aFq5-91M/hqdefault.jpg',courseUrl:'https://youtu.be/jS4aFq5-91M',youtubeVideoId:'jS4aFq5-91M',isFree:true,duration:'12h 0m',level:'Beginner',tags:['JavaScript','ES6','DOM','Async'],description:'Complete JavaScript course from variables to async/await.',source:'youtube'},
+    ],
+    datascience:[
+      {id:'yt-ua-CiDNNj30',title:'Data Science Full Course 2024',platform:'YouTube',field,instructor:'Simplilearn',price:0,rating:4.7,reviewCount:95200,thumbnailUrl:'https://i.ytimg.com/vi/ua-CiDNNj30/hqdefault.jpg',courseUrl:'https://youtu.be/ua-CiDNNj30',youtubeVideoId:'ua-CiDNNj30',isFree:true,duration:'11h 0m',level:'Beginner',tags:['Python','Statistics','ML','Visualization'],description:'Master data science with Python, covering all key tools and libraries.',source:'youtube'},
+      {id:'yt-LHBE6Q9XlzI',title:'Python for Data Science – Full Course',platform:'YouTube',field,instructor:'freeCodeCamp.org',price:0,rating:4.8,reviewCount:148000,thumbnailUrl:'https://i.ytimg.com/vi/LHBE6Q9XlzI/hqdefault.jpg',courseUrl:'https://youtu.be/LHBE6Q9XlzI',youtubeVideoId:'LHBE6Q9XlzI',isFree:true,duration:'12h 20m',level:'Beginner',tags:['Python','Pandas','NumPy','Matplotlib'],description:'Python for data science including pandas, numpy, and visualization.',source:'youtube'},
+    ],
+    aiml:[
+      {id:'yt-GwIo3gDZCVQ',title:'Machine Learning Full Course 2024',platform:'YouTube',field,instructor:'Simplilearn',price:0,rating:4.7,reviewCount:78400,thumbnailUrl:'https://i.ytimg.com/vi/GwIo3gDZCVQ/hqdefault.jpg',courseUrl:'https://youtu.be/GwIo3gDZCVQ',youtubeVideoId:'GwIo3gDZCVQ',isFree:true,duration:'10h 0m',level:'Beginner',tags:['ML','Sklearn','Regression','Classification'],description:'Complete machine learning course for beginners using Python.',source:'youtube'},
+      {id:'yt-tPYj3fFJGjk',title:'Deep Learning with TensorFlow 2.0 Full Course',platform:'YouTube',field,instructor:'freeCodeCamp.org',price:0,rating:4.8,reviewCount:92100,thumbnailUrl:'https://i.ytimg.com/vi/tPYj3fFJGjk/hqdefault.jpg',courseUrl:'https://youtu.be/tPYj3fFJGjk',youtubeVideoId:'tPYj3fFJGjk',isFree:true,duration:'13h 10m',level:'Intermediate',tags:['TensorFlow','Deep Learning','CNN','Keras'],description:'Learn deep learning with TensorFlow 2.0 from scratch.',source:'youtube'},
+    ],
+  };
+  const paid = {
+    webdev:[
+      {id:'p-wd1',title:'The Complete Web Developer Bootcamp 2024',platform:'Udemy',field,instructor:'Angela Yu',price:1299,rating:4.8,reviewCount:342000,thumbnailUrl:'https://img-c.udemycdn.com/course/240x135/1565838_e54e_16.jpg',courseUrl:'https://www.udemy.com/course/the-complete-web-development-bootcamp/',isFree:false,duration:'65h',level:'Beginner to Advanced',tags:['HTML','CSS','JS','Node.js','React'],description:'Become a full-stack web developer. HTML, CSS, Javascript, Node, React, MongoDB.',source:'local'},
+      {id:'p-wd2',title:'React - The Complete Guide 2024 (incl. Next.js, Redux)',platform:'Udemy',field,instructor:'Maximilian S.',price:1299,rating:4.7,reviewCount:220000,thumbnailUrl:'https://img-c.udemycdn.com/course/240x135/1362070_b9a1_2.jpg',courseUrl:'https://www.udemy.com/course/react-the-complete-guide-incl-redux/',isFree:false,duration:'68h',level:'Intermediate',tags:['React','Next.js','Redux','Hooks'],description:'Learn React.js from scratch! Hooks, Redux, Routing, Next.js and more!',source:'local'},
+      {id:'p-wd3',title:'Node.js, Express, MongoDB: The Complete Bootcamp',platform:'Udemy',field,instructor:'Jonas Schmedtmann',price:1199,rating:4.8,reviewCount:75000,thumbnailUrl:'https://img-c.udemycdn.com/course/240x135/1672410_9bd3_3.jpg',courseUrl:'https://www.udemy.com/course/nodejs-express-mongodb-bootcamp/',isFree:false,duration:'42h',level:'Intermediate',tags:['Node.js','Express','MongoDB','REST API'],description:'Master Node with a real-world RESTful API, authentication and payments.',source:'local'},
+    ],
+    datascience:[
+      {id:'p-ds1',title:'Complete Python Bootcamp From Zero to Hero',platform:'Udemy',field,instructor:'Jose Portilla',price:999,rating:4.7,reviewCount:510000,thumbnailUrl:'https://img-c.udemycdn.com/course/240x135/567828_67d0.jpg',courseUrl:'https://www.udemy.com/course/complete-python-bootcamp/',isFree:false,duration:'22h',level:'Beginner',tags:['Python','OOP','Data Science'],description:'Learn Python professionally! From basics to creating your own applications.',source:'local'},
+      {id:'p-ds2',title:'IBM Data Science Professional Certificate',platform:'Coursera',field,instructor:'IBM',price:2999,rating:4.6,reviewCount:85000,thumbnailUrl:'https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://s3.amazonaws.com/coursera-course-photos/08/33f720502a11e59e72391aa537f5c9/jhep-coursera-course4v3.1.jpg',courseUrl:'https://www.coursera.org/professional-certificates/ibm-data-science',isFree:false,duration:'10 months',level:'Beginner',tags:['Python','SQL','ML','Visualization'],description:'Kickstart your career in data science with IBM-backed certification.',source:'local'},
+    ],
+    aiml:[
+      {id:'p-ai1',title:'Machine Learning A-Z: AI, Python & R + ChatGPT',platform:'Udemy',field,instructor:'Kirill Eremenko',price:1499,rating:4.5,reviewCount:185000,thumbnailUrl:'https://img-c.udemycdn.com/course/240x135/950390_270f_3.jpg',courseUrl:'https://www.udemy.com/course/machinelearning/',isFree:false,duration:'44h',level:'Intermediate',tags:['ML','Python','R','Deep Learning','AI'],description:'Create Machine Learning Algorithms in Python and R from two Data Science experts.',source:'local'},
+      {id:'p-ai2',title:'Deep Learning Specialization',platform:'Coursera',field,instructor:'Andrew Ng',price:3999,rating:4.9,reviewCount:120000,thumbnailUrl:'https://d3njjcbhbojbot.cloudfront.net/api/utilities/v1/imageproxy/https://s3.amazonaws.com/coursera-course-photos/08/33f720502a11e59e72391aa537f5c9/jhep-coursera-course4v3.1.jpg',courseUrl:'https://www.coursera.org/specializations/deep-learning',isFree:false,duration:'5 months',level:'Intermediate',tags:['Deep Learning','TensorFlow','Neural Networks','CNN'],description:'Master Deep Learning by building neural networks from Andrew Ng.',source:'local'},
+    ],
+  };
+  const resources = {
+    webdev:[
+      {id:'r1',title:'freeCodeCamp',url:'https://github.com/freeCodeCamp/freeCodeCamp',type:'github',description:'Open-source codebase and full curriculum for learning web development.',stars:390000,language:'TypeScript'},
+      {id:'r2',title:'javascript-algorithms',url:'https://github.com/trekhleb/javascript-algorithms',type:'github',description:'Algorithms and data structures implemented in JavaScript with explanations.',stars:185000,language:'JavaScript'},
+      {id:'r3',title:'MDN Web Docs',url:'https://developer.mozilla.org/',type:'docs',description:'The definitive reference for HTML, CSS, and JavaScript APIs.',stars:null,language:null},
+    ],
+    datascience:[
+      {id:'r4',title:'awesome-data-science',url:'https://github.com/academic/awesome-datascience',type:'github',description:'Curated awesome list for Data Science learning and resources.',stars:24000,language:null},
+      {id:'r5',title:'pandas',url:'https://github.com/pandas-dev/pandas',type:'github',description:'Flexible and powerful data analysis library for Python.',stars:42000,language:'Python'},
+      {id:'r6',title:'Kaggle Learn',url:'https://www.kaggle.com/learn',type:'docs',description:'Free micro-courses: Python, ML, SQL, and data visualization.',stars:null,language:null},
+    ],
+    aiml:[
+      {id:'r7',title:'awesome-machine-learning',url:'https://github.com/josephmisiti/awesome-machine-learning',type:'github',description:'Curated list of ML frameworks, libraries and software.',stars:64000,language:null},
+      {id:'r8',title:'scikit-learn',url:'https://github.com/scikit-learn/scikit-learn',type:'github',description:'Machine Learning in Python — simple and efficient tools.',stars:59000,language:'Python'},
+      {id:'r9',title:'Papers With Code',url:'https://paperswithcode.com/',type:'docs',description:'Latest ML research papers with open-source code implementations.',stars:null,language:null},
+    ],
+  };
+  const recReasons = [
+    'Highest-rated with exceptional learner satisfaction and comprehensive coverage.',
+    'Best free resource with massive engagement and community-backed content.',
+    'Perfect for beginners — structured, step-by-step approach to all fundamentals.',
+    'Industry-aligned curriculum by recognised experts with hands-on exercises.',
+    'Outstanding value combining theory with practice at the best price ratio.',
+  ];
+  const all = [...(yt[field]||[]), ...(paid[field]||[])];
+  const sorted = [...all].sort((a,b)=>(b.rating*0.5+(b.isFree?2:0))-(a.rating*0.5+(a.isFree?2:0)));
+  return {
+    allCourses: all,
+    topRecommended: sorted.slice(0,5).map((c,i)=>({rank:i+1,course:c,reason:recReasons[i],score:+(10-i*0.6).toFixed(1)})),
+    resources: resources[field]||[],
+    totalCount: all.length,
+    field,
+  };
+}
+
+// Build global pool at startup
+;['webdev','datascience','aiml'].forEach(f => {
+  mockData(f).allCourses.forEach(c => {
+    if (!S.allPool.find(x=>x.id===c.id)) S.allPool.push(c);
+  });
+});
+
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
+const fmtNum = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? Math.round(n/1e3)+'K' : (n||0).toString();
+const isBm   = id => S.bookmarks.includes(id);
+const saveBm = () => localStorage.setItem('nc_bm', JSON.stringify(S.bookmarks));
+const saveRc = () => localStorage.setItem('nc_rc', JSON.stringify(S.recent));
+
+function platformBadge(p) {
+  const map = {YouTube:'b-yt',Udemy:'b-udemy',Coursera:'b-coursera'};
+  return p ? `<span class="badge ${map[p]||'b-udemy'}">${p}</span>` : '';
+}
+function priceBadge(isFree, price) {
+  return isFree
+    ? `<span class="badge b-free">FREE</span>`
+    : `<span class="badge b-paid">&#8377;${price}</span>`;
+}
+function addRecent(c) {
+  S.recent = S.recent.filter(x=>x.id!==c.id);
+  S.recent.unshift({id:c.id,title:c.title,thumbnailUrl:c.thumbnailUrl});
+  if (S.recent.length>10) S.recent=S.recent.slice(0,10);
+  saveRc();
+}
+function getFiltered() {
+  let list = (S.search.trim() && !S.field) ? [...S.allPool] : [...S.courses];
+  if (S.filter==='free') list=list.filter(c=>c.isFree);
+  if (S.filter==='paid') list=list.filter(c=>!c.isFree);
+  if (S.maxPrice<5000) list=list.filter(c=>c.isFree||c.price<=S.maxPrice);
+  if (S.search.trim()) {
+    const q=S.search.toLowerCase();
+    list=list.filter(c=>
+      c.title.toLowerCase().includes(q)||
+      (c.instructor||'').toLowerCase().includes(q)||
+      (c.tags||[]).some(t=>t.toLowerCase().includes(q))||
+      (c.description||'').toLowerCase().includes(q)||
+      (c.platform||'').toLowerCase().includes(q)
+    );
+  }
+  return list;
+}
+
+// ════════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════════
+function toast(msg, icon='✓') {
+  const el = document.createElement('div');
+  el.className='toast';
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{el.classList.add('toast-out');setTimeout(()=>el.remove(),300)},3000);
+}
+
+// ════════════════════════════════════════════════════════════
+// RENDER PIECES
+// ════════════════════════════════════════════════════════════
+function renderTopBar() {
+  const fields=[{id:'webdev',e:'🌐',l:'Web Dev'},{id:'datascience',e:'📊',l:'Data Science'},{id:'aiml',e:'🤖',l:'AI/ML'}];
+  return `<div class="topbar" id="topbar">
+    <div class="logo"><div class="logo-icon">⚡</div><span class="logo-text">Neural Course</span></div>
+    <div class="field-tabs">
+      ${fields.map(f=>`<button class="field-tab ${S.field===f.id?'active':''}" data-field="${f.id}" onclick="doField('${f.id}')">${f.e} ${f.l}</button>`).join('')}
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-input" type="text" placeholder="Search any topic — UI/UX, DSA, Flutter…" value="${S.search}" oninput="doSearch(this.value)" />
+      <div class="search-clear" onclick="clearSearch()">✕</div>
+    </div>
+    <div class="top-controls">
+      <div class="filter-pill">
+        ${['all','free','paid'].map(f=>`<button class="filter-btn ${S.filter===f?'active':''}" data-filter="${f}" onclick="doFilter('${f}')">${f[0].toUpperCase()+f.slice(1)}</button>`).join('')}
+      </div>
+      <button class="ctrl-btn ${S.ytKey?'active':''}" onclick="doYtKey()">🎬 ${S.ytKey?'YT ✓':'YT Key'}</button>
+      <button class="theme-toggle" onclick="doTheme()">${S.theme==='dark'?'☀️':'🌙'}</button>
+    </div>
+  </div>`;
+}
+
+function renderSidebar() {
+  const courses = getFiltered();
+  const label = S.search.trim() && !S.field ? '🔍 Search Results'
+    : S.field ? (S.field==='webdev'?'Web Development':S.field==='datascience'?'Data Science':'AI / ML')
+    : 'Select a Field';
+  return `<div class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-label">${label}</div>
+      <div class="sidebar-count">${S.loading?'Loading…':courses.length+' courses found'}</div>
+    </div>
+    <div class="sidebar-list">
+      ${S.ytSearching?`<div class="yt-searching"><div class="spinner"></div>Searching YouTube…</div>`:''}
+      ${S.loading
+        ? Array(7).fill(0).map(()=>`<div class="skel skel-sidebar"></div>`).join('')
+        : courses.length===0
+          ? `<div style="padding:32px 16px;text-align:center;color:var(--text3);font-size:13px">
+              <div style="font-size:32px;margin-bottom:10px">🔎</div>
+              ${S.search.trim()?`No results for "<strong style="color:var(--text2)">${S.search}</strong>"`:S.field?'No courses match your filters.':'Pick a field above or search any topic.'}
+             </div>`
+          : courses.map(c=>`
+            <div class="course-card ${S.selected?.id===c.id?'active':''} ${isBm(c.id)?'bm':''}" data-id="${c.id}" onclick="doCourse('${c.id}')">
+              <img class="card-thumb" src="${c.thumbnailUrl}" loading="lazy" onerror="this.src='https://placehold.co/58x42/1c2030/6c63ff?text=📚'"/>
+              <div class="card-info">
+                <div class="card-title">${c.title}</div>
+                <div class="card-tags">${platformBadge(c.platform)} ${priceBadge(c.isFree,c.price)}</div>
+              </div>
+            </div>`).join('')
+      }
+    </div>
+  </div>`;
+}
+
+function renderRecently() {
+  if (!S.recent.length) return '';
+  return `<div class="section-wrap">
+    <div class="section-head"><div class="section-title">🕐 Recently Viewed</div></div>
+    <div class="recent-row">
+      ${S.recent.slice(0,8).map(c=>`
+        <div class="recent-item" onclick="doCourse('${c.id}')">
+          <img class="recent-thumb" src="${c.thumbnailUrl}" onerror="this.style.display='none'" loading="lazy"/>
+          <div class="recent-title">${c.title}</div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderRecs() {
+  if (!S.recommended.length) return '';
+  return `<div class="section-wrap">
+    <div class="section-head">
+      <div class="section-title">🧠 AI Top Picks <span class="ai-chip">GROQ-POWERED</span></div>
+    </div>
+    <div class="recs-grid">
+      ${S.loading
+        ? Array(5).fill(0).map(()=>`<div class="skel skel-rec"></div>`).join('')
+        : S.recommended.map(r=>`
+          <div class="rec-card" onclick="doCourse('${r.course.id}')">
+            <div class="rec-rank">${r.rank}</div>
+            <img class="rec-img" src="${r.course.thumbnailUrl}" loading="lazy" onerror="this.src='https://placehold.co/240x105/1c2030/6c63ff?text=📚'"/>
+            <div class="rec-body">
+              <div class="rec-platform">${platformBadge(r.course.platform)} ${priceBadge(r.course.isFree,r.course.price)}</div>
+              <div class="rec-name">${r.course.title}</div>
+              <div class="rec-reason">"${r.reason}"</div>
+              <div class="score-row">
+                <span style="font-size:10px;color:var(--text3)">Score</span>
+                <div class="score-bar"><div class="score-fill" style="width:${(r.score/10)*100}%"></div></div>
+                <span class="score-num">${r.score}</span>
+              </div>
+            </div>
+          </div>`).join('')
+      }
+    </div>
+  </div>`;
+}
+
+function renderVideo(c) {
+  const vid = c.youtubeVideoId;
+  if (!vid) {
+    return `<div class="video-outer">
+      <div class="video-fallback" onclick="window.open('${c.courseUrl}','_blank')">
+        <img class="fallback-thumb" src="${c.thumbnailUrl}" onerror="this.style.display='none'"/>
+        <div class="fallback-content">
+          <div class="play-circle">▶</div>
+          <div class="fallback-label">${c.platform} Course</div>
+          <div class="fallback-sub">Click to open on ${c.platform}</div>
+          <button class="fallback-btn" onclick="event.stopPropagation();window.open('${c.courseUrl}','_blank')">Open Course →</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  // Check if this video is known to fail embedding
+  if (S.embedFailed[vid]) return renderVideoFallback(c, vid);
+  return `<div class="video-outer" id="video-wrap-${vid}">
+    <iframe
+      src="https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1&autoplay=0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen loading="lazy"
+      onerror="embedError('${vid}')"
+      id="yt-iframe-${vid}"
+    ></iframe>
+  </div>
+  <script>
+    (function checkEmbed() {
+      var t = 0;
+      var iv = setInterval(function() {
+        t += 500;
+        var fr = document.getElementById('yt-iframe-${vid}');
+        if (!fr) { clearInterval(iv); return; }
+        try {
+          var doc = fr.contentDocument || fr.contentWindow.document;
+          if (doc && doc.title && doc.title.toLowerCase().includes('error')) {
+            clearInterval(iv);
+            embedError('${vid}');
+          }
+        } catch(e) {}
+        if (t > 5000) clearInterval(iv);
+      }, 500);
+    })();
+  <\/script>`;
+}
+
+function renderVideoFallback(c, vid) {
+  return `<div class="video-outer">
+    <div class="video-fallback" onclick="window.open('${c.courseUrl}','_blank')">
+      <img class="fallback-thumb" src="https://i.ytimg.com/vi/${vid}/hqdefault.jpg" onerror="this.style.display='none'"/>
+      <div class="fallback-content">
+        <div class="play-circle">▶</div>
+        <div class="fallback-label">${c.title.substring(0,40)}${c.title.length>40?'…':''}</div>
+        <div class="fallback-sub">This video cannot be embedded (restricted by channel)</div>
+        <button class="fallback-btn" onclick="event.stopPropagation();window.open('https://www.youtube.com/watch?v=${vid}','_blank')">Watch on YouTube →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderDetail(c) {
+  const bm = isBm(c.id);
+  return `<div class="detail">
+    ${renderVideo(c)}
+    <div class="info-card">
+      <div class="info-badges">${platformBadge(c.platform)} ${priceBadge(c.isFree,c.price)} <span class="badge b-level">${c.level||'All Levels'}</span> <span class="badge b-dur">⏱ ${c.duration||'—'}</span></div>
+      <div class="info-header">
+        <div style="flex:1;min-width:0">
+          <div class="info-title">${c.title}</div>
+          <div class="info-instructor">👤 <span>${c.instructor||'Unknown'}</span></div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="info-price ${c.isFree?'free':''}">${c.isFree?'FREE':'₹'+c.price}</div>
+          <div class="info-reviews">${fmtNum(c.reviewCount)} reviews</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-lbl">Rating</div><div class="stat-val rating">★ ${(c.rating||4.5).toFixed(1)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Students</div><div class="stat-val">${fmtNum(c.reviewCount)}</div></div>
+        <div class="stat-box"><div class="stat-lbl">Duration</div><div class="stat-val">${c.duration||'—'}</div></div>
+      </div>
+      <div class="info-desc">${c.description||'No description available.'}</div>
+      <div class="tags-row">${(c.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="actions">
+        <button class="btn-main" onclick="window.open('${c.courseUrl}','_blank')">🚀 Go to Course</button>
+        <button class="btn-sec ${bm?'saved':''}" onclick="doBm('${c.id}')">${bm?'🔖 Saved':'🔖 Save'}</button>
+        <button class="btn-sec" onclick="window.open('${c.courseUrl}','_blank')" title="Open">↗</button>
+      </div>
+    </div>
+    ${S.resources.length?`
+    <div class="section-wrap">
+      <div class="section-head"><div class="section-title">📚 Learning Resources</div></div>
+      <div class="resources-grid">
+        ${S.resources.map(r=>`
+          <div class="res-card" onclick="window.open('${r.url}','_blank')">
+            <div class="res-icon ${r.type}">${r.type==='github'?'🐙':r.type==='docs'?'📖':'📄'}</div>
+            <div class="res-info">
+              <div class="res-title">${r.title}</div>
+              <div class="res-desc">${r.description}</div>
+              <div class="res-meta">
+                ${r.stars?`<span class="res-stars">★ ${fmtNum(r.stars)}</span>`:''}
+                ${r.language?`<span class="res-lang">${r.language}</span>`:''}
+                <span style="margin-left:auto;font-size:10px;color:var(--accent3)">Open →</span>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`:''}
+  </div>`;
+}
+
+function renderWelcome() {
+  return `<div class="welcome">
+    <div class="welcome-glow"></div>
+    <div class="welcome-emoji">⚡</div>
+    <div class="welcome-title">Discover Your Next Course</div>
+    <div class="welcome-sub">AI-powered aggregation from YouTube, Udemy, Coursera — ranked for you instantly. Search any topic or pick a field.</div>
+    <div class="field-grid">
+      ${[{id:'webdev',e:'🌐',n:'Web Development'},{id:'datascience',e:'📊',n:'Data Science'},{id:'aiml',e:'🤖',n:'AI / ML'}].map(f=>`
+        <div class="field-btn" onclick="doField('${f.id}')">
+          <span class="icon">${f.e}</span>
+          <span class="name">${f.n}</span>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderMain() {
+  if (S.error) return `<div class="empty-state">
+    <div class="empty-icon">⚠️</div>
+    <div class="empty-title" style="color:var(--red)">Something went wrong</div>
+    <div class="empty-sub">${S.error}</div>
+    <button class="btn-main" style="margin-top:12px;width:auto" onclick="doField('${S.field}')">Retry</button>
+  </div>`;
+
+  if (!S.field) {
+    if (S.search.trim()) {
+      const res = getFiltered();
+      if (S.selected) {
+        return `<div class="search-crumb">
+          <span>🔍</span>
+          <span class="crumb-q">"${S.search}"</span>
+          <span style="color:var(--text3)">•</span>
+          <span style="color:var(--text2)">${res.length} results</span>
+          ${S.ytKey?'<span class="crumb-live">Live YouTube</span>':''}
+          ${S.ytSearching?'<div class="spinner" style="margin-left:auto"></div>':''}
+        </div>
+        ${renderDetail(S.selected)}`;
+      }
+      if (res.length===0 && !S.ytSearching) return renderWelcome();
+      return `<div class="search-crumb">
+        <span>🔍</span>
+        <span class="crumb-q">"${S.search}"</span>
+        <span style="color:var(--text3)">•</span>
+        <span style="color:var(--text2)">${res.length} results found</span>
+        ${S.ytKey?'<span class="crumb-live">Live YouTube</span>':''}
+        ${S.ytSearching?'<div class="spinner" style="margin-left:auto"></div>':''}
+      </div>
+      <div style="padding:40px;text-align:center;color:var(--text3)">
+        <div style="font-size:36px;margin-bottom:12px">👈</div>
+        <div style="font-size:14px;color:var(--text2)">Click any course in the sidebar to view details & watch the video</div>
+      </div>
+      ${renderRecently()}`;
+    }
+    return renderWelcome();
+  }
+
+  return `${renderRecently()}${renderRecs()}
+    ${S.loading
+      ? `<div class="skel skel-video" style="margin-bottom:16px"></div>
+         <div class="skel skel-info"></div>`
+      : S.selected
+        ? renderDetail(S.selected)
+        : `<div class="empty-state" style="min-height:40vh">
+            <div class="empty-icon">👆</div>
+            <div class="empty-sub">Select a course from the sidebar to view details and play the video.</div>
+           </div>`
+    }`;
+}
+
+// ════════════════════════════════════════════════════════════
+// FULL RENDER (first time only)
+// ════════════════════════════════════════════════════════════
+function render() {
+  if (!document.getElementById('topbar')) {
+    document.getElementById('app').innerHTML =
+      renderTopBar() +
+      `<div class="body">` +
+        `<div id="sidebar-root">${renderSidebar()}</div>` +
+        `<div class="main" id="main">${renderMain()}</div>` +
+      `</div>`;
+  } else {
+    syncTopBar();
+    document.getElementById('sidebar-root').innerHTML = renderSidebar();
+    document.getElementById('main').innerHTML = renderMain();
+  }
+}
+
+function syncTopBar() {
+  document.querySelectorAll('.field-tab').forEach(b=>b.classList.toggle('active',b.dataset.field===S.field));
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter===S.filter));
+  const tb = document.querySelector('.theme-toggle');
+  if (tb) tb.textContent = S.theme==='dark'?'☀️':'🌙';
+  const yt = document.querySelector('.ctrl-btn');
+  if (yt) { yt.textContent = '🎬 '+(S.ytKey?'YT ✓':'YT Key'); yt.classList.toggle('active',!!S.ytKey); }
+}
+
+function partialUpdate() {
+  document.getElementById('sidebar-root').innerHTML = renderSidebar();
+  document.getElementById('main').innerHTML = renderMain();
+}
+
+// ════════════════════════════════════════════════════════════
+// EMBED ERROR HANDLER
+// ════════════════════════════════════════════════════════════
+window.embedError = function(vid) {
+  S.embedFailed[vid] = true;
+  const wrap = document.getElementById('video-wrap-'+vid);
+  if (wrap && S.selected && S.selected.youtubeVideoId===vid) {
+    wrap.outerHTML = renderVideoFallback(S.selected, vid);
+  }
+};
+
+// ════════════════════════════════════════════════════════════
+// ACTIONS
+// ════════════════════════════════════════════════════════════
+window.doField = async function(field) {
+  if (S.field===field && !S.loading) return;
+  S.field=field; S.selected=null; S.courses=[]; S.recommended=[]; S.resources=[]; S.error=null; S.loading=true;
+  render();
+  try {
+    let data;
+    try {
+      const url = API_BASE+'/courses/'+field+(S.filter!=='all'?'?type='+S.filter:'');
+      const res = await fetch(url,{signal:AbortSignal.timeout(4000)});
+      if (!res.ok) throw new Error('backend unavailable');
+      data = await res.json();
+    } catch { data = mockData(field); }
+    S.courses=data.allCourses||[];
+    S.recommended=data.topRecommended||[];
+    S.resources=data.resources||[];
+    // Add to pool
+    S.courses.forEach(c=>{ if(!S.allPool.find(x=>x.id===c.id)) S.allPool.push(c); });
+    if (S.courses.length) { S.selected=S.courses[0]; addRecent(S.courses[0]); }
+  } catch(e) { S.error='Failed to load courses. Please try again.'; }
+  S.loading=false; render();
+};
+
+window.doCourse = function(id) {
+  const all=[...S.courses,...S.recommended.map(r=>r.course),...S.allPool];
+  const c=all.find(x=>x.id===id);
+  if (!c) return;
+  S.selected=c; addRecent(c);
+  // Update sidebar highlight
+  document.querySelectorAll('.course-card').forEach(el=>el.classList.toggle('active',el.dataset.id===id));
+  // Update main panel only
+  const m=document.getElementById('main');
+  if (m) { m.scrollTo({top:0,behavior:'smooth'}); m.innerHTML=renderMain(); }
+  const sb=document.getElementById('sidebar-root');
+  if (sb) sb.innerHTML=renderSidebar();
+};
+
+let _searchTimer=null;
+window.doSearch = function(val) {
+  S.search=val;
+  // Update sidebar instantly (no topbar rebuild = focus preserved)
+  const sb=document.getElementById('sidebar-root');
+  if (sb) sb.innerHTML=renderSidebar();
+  const m=document.getElementById('main');
+  if (m) m.innerHTML=renderMain();
+  // Debounced YouTube live search
+  clearTimeout(_searchTimer);
+  if (val.trim().length>=2 && S.ytKey) {
+    _searchTimer=setTimeout(()=>ytSearch(val.trim()),650);
+  }
+};
+
+window.clearSearch = function() {
+  S.search=''; S.selected=null;
+  const inp=document.getElementById('search-input');
+  if (inp) { inp.value=''; inp.focus(); }
+  const sb=document.getElementById('sidebar-root');
+  if (sb) sb.innerHTML=renderSidebar();
+  const m=document.getElementById('main');
+  if (m) m.innerHTML=renderMain();
+};
+
+window.doFilter = function(f) {
+  S.filter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter===f));
+  const sb=document.getElementById('sidebar-root');
+  if (sb) sb.innerHTML=renderSidebar();
+};
+
+window.doTheme = function() {
+  S.theme=S.theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',S.theme);
+  localStorage.setItem('nc_th',S.theme);
+  const tb=document.querySelector('.theme-toggle');
+  if (tb) tb.textContent=S.theme==='dark'?'☀️':'🌙';
+};
+
+window.doBm = function(id) {
+  const i=S.bookmarks.indexOf(id);
+  if (i>=0) { S.bookmarks.splice(i,1); toast('Bookmark removed','🗑'); }
+  else { S.bookmarks.push(id); toast('Course saved!','🔖'); }
+  saveBm();
+  const sb=document.getElementById('sidebar-root');
+  if (sb) sb.innerHTML=renderSidebar();
+  const m=document.getElementById('main');
+  if (m) m.innerHTML=renderMain();
+};
+
+window.doYtKey = function() {
+  const key=prompt(
+    'Enter your YouTube Data API v3 key\n\n'+
+    'Benefits:\n'+
+    '  • Live search for ANY topic (UI/UX, DSA, Flutter...)\n'+
+    '  • Education-only filtered results\n'+
+    '  • Real view counts and durations\n\n'+
+    'Get FREE key: console.cloud.google.com\n'+
+    '(Enable: YouTube Data API v3)\n\n'+
+    'Leave blank to use demo data only:',
+    S.ytKey
+  );
+  if (key===null) return;
+  S.ytKey=key.trim();
+  localStorage.setItem('nc_yt',S.ytKey);
+  toast(S.ytKey?'YouTube key saved! Start searching 🎬':'Using demo data','✓');
+  syncTopBar();
+  if (S.field) doField(S.field);
+};
+
+// ════════════════════════════════════════════════════════════
+// LIVE YOUTUBE SEARCH
+// ════════════════════════════════════════════════════════════
+async function ytSearch(query) {
+  if (!S.ytKey) return;
+  S.ytSearching=true;
+  const sb=document.getElementById('sidebar-root');
+  if (sb) sb.innerHTML=renderSidebar();
+
+  try {
+    const q=encodeURIComponent(query+' course tutorial');
+    // videoCategoryId=27 = Education, also add safeSearch
+    const url='https://www.googleapis.com/youtube/v3/search'
+      +'?part=snippet&q='+q
+      +'&type=video&videoDuration=medium'
+      +'&videoCategoryId=27'
+      +'&maxResults=10&relevanceLanguage=en'
+      +'&safeSearch=strict'
+      +'&key='+S.ytKey;
+
+    const res=await fetch(url);
+    if (!res.ok) {
+      const err=await res.json().catch(()=>({}));
+      toast('YouTube error: '+(err.error?.message||res.status),'⚠️');
+      S.ytSearching=false;
+      if (sb) sb.innerHTML=renderSidebar();
+      return;
+    }
+    const data=await res.json();
+    const items=data.items||[];
+
+    // Fetch video stats in one call
+    const ids=items.map(i=>i.id.videoId).join(',');
+    let statsMap={};
+    if (ids) {
+      try {
+        const sr=await fetch('https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id='+ids+'&key='+S.ytKey);
+        if (sr.ok) { const sd=await sr.json(); (sd.items||[]).forEach(v=>{statsMap[v.id]=v;}); }
+      } catch(e) {}
+    }
+
+    const ytCourses=items.map(item=>{
+      const vid=item.id.videoId;
+      const sn=item.snippet;
+      const stat=statsMap[vid]?.statistics||{};
+      const dur=statsMap[vid]?.contentDetails?.duration||'';
+      const views=parseInt(stat.viewCount||0);
+      // Parse ISO duration
+      let ds='';
+      const dm=dur.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+      if (dm) { const h=dm[1]||0,m=dm[2]||0; ds=h?(h+'h '+(m?m+'m':'')):(m?m+' min':''); }
+      const rating=views>1e6?4.9:views>5e5?4.8:views>1e5?4.7:views>5e4?4.6:views>1e4?4.5:4.3;
+      const thumb=(sn.thumbnails.high||sn.thumbnails.medium||sn.thumbnails.default);
+      return {
+        id:'yt-live-'+vid,
+        title:sn.title,platform:'YouTube',
+        field:S.field||'search',
+        instructor:sn.channelTitle,price:0,
+        rating,reviewCount:views||Math.floor(Math.random()*30000+1000),
+        thumbnailUrl:thumb.url,
+        courseUrl:'https://www.youtube.com/watch?v='+vid,
+        youtubeVideoId:vid,
+        isFree:true,duration:ds||'20+ min',level:'All Levels',
+        tags:[query,'youtube','free','education'],
+        description:sn.description||sn.title,
+        source:'youtube'
+      };
+    });
+
+    // Merge — remove old live results, add new ones
+    const existingPaid=S.courses.filter(c=>c.source!=='youtube'||!c.id.startsWith('yt-live-'));
+    S.courses=[...ytCourses,...existingPaid];
+    ytCourses.forEach(c=>{if(!S.allPool.find(x=>x.id===c.id))S.allPool.push(c);});
+
+    S.ytSearching=false;
+    S.selected=ytCourses[0]||S.selected;
+    if (S.selected) addRecent(S.selected);
+
+    const sbEl=document.getElementById('sidebar-root');
+    if (sbEl) sbEl.innerHTML=renderSidebar();
+    const mEl=document.getElementById('main');
+    if (mEl) mEl.innerHTML=renderMain();
+
+    toast('Found '+ytCourses.length+' results for "'+query+'"','🎬');
+  } catch(e) {
+    console.error(e);
+    S.ytSearching=false;
+    toast('YouTube search failed. Check your API key.','⚠️');
+    const sbEl=document.getElementById('sidebar-root');
+    if (sbEl) sbEl.innerHTML=renderSidebar();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════════════════
+try { render(); } catch(e) {
+  document.getElementById('app').innerHTML=
+    '<div style="color:#ff5c5c;padding:40px;font-family:sans-serif"><h2>Startup Error</h2><pre>'+e.message+'</pre></div>';
+}
+</script>
+</body>
+</html>
