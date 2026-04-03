@@ -16,7 +16,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 # Port 10000 is the default for Render
-ENV ASPNETCORE_URLS=http://+:10000
+ENV AASPNETCORE_HTTP_PORTS=10000
 EXPOSE 10000
 
 ENTRYPOINT ["dotnet", "ELearnAggregator.dll"]
